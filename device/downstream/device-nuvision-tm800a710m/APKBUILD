@@ -1,0 +1,32 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-nuvision-tm800a710m
+pkgdesc="nuvision TM800A710M"
+pkgver=1
+pkgrel=11
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="postmarketos-base android-tools"
+makedepends="devicepkg-dev"
+subpackages="$pkgname-kernel-downstream:kernel_downstream"
+source="deviceinfo modules-initfs"
+
+build() {
+    devicepkg_build $startdir $pkgname
+}
+
+package() {
+    devicepkg_package $startdir $pkgname
+}
+
+kernel_downstream() {
+    pkgdesc="Downstream kernel"
+    depends="linux-nuvision-tm800a710m"
+    devicepkg_subpackage_kernel $startdir $pkgname $subpkgname
+}
+
+sha512sums="
+8a6422165c49b5cb2175d45e731a842fc8059c7b2a0c61982ab1b632225861cbc65c235895e7dbfdd82e6c1076c78b7c870966dcd3a49bee03571efbfc4481be  deviceinfo
+e70bae17df23dcaaaea0e2d3616556f04baa23f8ee1357785c0f539bf97282d8ddff53953e155b72689bb73beb38c2da3d08de2a61e866684edfa10a6593885d  modules-initfs
+"

@@ -1,0 +1,43 @@
+# Maintainer: qlegacy <qlegacy@example.com>
+pkgname=linux-nuvision-tm800a710m
+pkgver=3.18.35
+pkgrel=4
+arch="aarch64"
+pkgdesc="Prebuilt downstream kernel for Nuvision TM800A710M"
+url="https://postmarketos.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps !archcheck"
+_flavor="downstream"
+
+source="zImage"
+
+build() {
+    return 0
+}
+
+package() {
+    _flavor="downstream"
+    _kernel_ver="3.18.35+"
+    
+    # 1. Устанавливаем ядро
+    install -Dm644 "$srcdir/zImage" "$pkgdir/boot/vmlinuz-$_flavor"
+    
+    # 2. Создаем полную фейковую структуру модулей
+    _moddir="$pkgdir/lib/modules/$_kernel_ver"
+    mkdir -p "$_moddir/kernel"
+    
+    # Создаем сервисные файлы модулей
+    for file in modules.dep modules.alias modules.symbols modules.builtin modules.order; do
+        touch "$_moddir/$file"
+    done
+
+    # 3. Добавляем фейковый конфиг (важно для некоторых скриптов)
+    touch "$pkgdir/boot/config-$_flavor"
+    
+    # 4. Создаем обязательный для нового mkinitfs файл kernel.release
+    mkdir -p "$pkgdir/usr/share/kernel/$_flavor"
+    echo "$_kernel_ver" > "$pkgdir/usr/share/kernel/$_flavor/kernel.release"
+}
+sha512sums="
+2398e99721f19597780f019e551e6cad89b53e12a4f8a5c4617e0427c2a0e36b64206c9d95d0aebf33c97be1598d768718a5e4ae15890368014694db75ff886e  zImage
+"
